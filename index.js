@@ -19,8 +19,25 @@ noble.on('stateChange', (state) => {
   console.log('State change: \n', state)
 })
 
-noble.on('discover', (result) => {
-  console.log('Discover: \n', result)
+noble.on('discover', (peripheral) => {
+  console.log('Discover: \n', peripheral)
+  peripheral.connect((error) => {
+    if (error) console.log(error)
+  })
+  peripheral.once('connect', (error) => {
+    if (error) {
+      return console.log('Connect error: \n', error)
+    }
+
+    peripheral.discoverServices()
+    peripheral.once('servicesDiscover', (services) => {
+      console.log('Services: \n', services)
+    })
+    peripheral.discoverAllServicesAndCharacteristics()
+    peripheral.once('characteristicsDiscover', (characteristic) => {
+      console.log(characteristic)
+    })
+  })
 })
 
 noble.on('warning', (result) => {
