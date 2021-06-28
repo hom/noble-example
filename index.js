@@ -69,9 +69,10 @@ function onServicesAndCharacteristicsDiscovered(error, services,  characteristic
   let total = 0
   read.on('data', (data) => {
     total += 1
-    if (total > 261) {
-      console.log(Buffer.from(data))
-      read.unsubscribe()
+    if (total > 262) {
+      return read.unsubscribe()
+    }
+    if (total === 262) {
       upload()
       return write.write(Buffer.from([0x02]))
     }
