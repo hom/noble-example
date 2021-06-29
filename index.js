@@ -94,9 +94,6 @@ function onServicesAndCharacteristicsDiscovered(error, services,  characteristic
     validate(sequence, counter++)
     // console.log('Receive: ', Buffer.from(data).toString('hex'))
     console.log('Receive: ', buffer)
-    if (total % 9 === 0) {
-      return checkup.push(buffer.slice(1, 17))
-    }
     checkup.push(buffer.slice(1))
   }
   
@@ -117,9 +114,6 @@ function onServicesAndCharacteristicsDiscovered(error, services,  characteristic
     insert.on('data', (data) => {
       const buffer = Buffer.from(data)
       const [sequence] = buffer
-      if (sequence % 9 === 0) {
-        return checkup.splice(sequence, sequence + 1, buffer.slice(1, 17))
-      }
       checkup.splice(sequence, sequence + 1, buffer.slice(1))
     })
   }
