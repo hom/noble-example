@@ -95,9 +95,9 @@ function onServicesAndCharacteristicsDiscovered(error, services,  characteristic
     // console.log('Receive: ', Buffer.from(data).toString('hex'))
     console.log('Receive: ', buffer)
     if (total % 9 === 0) {
-      return checkup.push(buffer.slice(0, 17).toString('hex'))
+      return checkup.push(buffer.slice(1, 17))
     }
-    checkup.push(buffer.toString('hex'))
+    checkup.push(buffer.slice(1))
   }
   
   function validate(sequence, counter) {
@@ -117,11 +117,21 @@ function onServicesAndCharacteristicsDiscovered(error, services,  characteristic
     insert.on('data', (data) => {
       const buffer = Buffer.from(data)
       const [sequence] = buffer
-      checkup.splice(sequence, sequence + 1, buffer.toString('hex'))
+      if (sequence % 9 === 0) {
+        return checkup.splice(sequence, sequence + 1, buffer.slice(1, 17))
+      }
+      checkup.splice(sequence, sequence + 1, buffer.slice(1))
     })
   }
   function upload() {
     console.log('Upload start:')
     console.log(checkup)
+    const data = checkup.reduce((map, item) => {
+      for (let value of item.values()) {
+        map.push(value.toString(16))
+      }
+      return map
+    }, [])
+    console.log(data.join(' '))
   }
 }
